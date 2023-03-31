@@ -19,7 +19,7 @@ function usage {
 }
 
 function notify_complete {
-    paplay /usr/local/bindamn-son.mp3 &
+    paplay /usr/local/bin/damn-son.mp3 &
     notify-send "Tomato" "$1" -i /usr/share/icons/Adwaita/32x32/emotes/face-smile-symbolic.symbolic.png -t 3600000
 }
 
