@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Set the time interval for each Pomodoro
+POMODORO_TIME=30
+
+# Set the time interval for each break
+BREAK_TIME=5
+
+# Set the number of Pomodoros
+NUM_POMODOROS=4
+
+# Define a function to display usage information
+function usage {
+  echo "Usage: tomato [-p POMODORO] [-s BREAK_TIME] [-n NUM_POMODOROS]"
+  echo "       -p: Pomodoro length (in minutes), default: $POMODORO_TIME"
+  echo "       -s: Break length (in minutes), default: $BREAK_TIME"
+  echo "       -n: Number of Pomodoro cycles, default: $NUM_POMODOROS"
+  exit 1
+}
+
+function notify_complete {
+    paplay /usr/local/bindamn-son.mp3 &
+    notify-send "Tomato" "$1" -i /usr/share/icons/Adwaita/32x32/emotes/face-smile-symbolic.symbolic.png -t 3600000
+}
+
+# Parse command-line arguments
+while getopts "p:b:n:" opt; do
+  case $opt in
+    p) POMODORO_TIME=$OPTARG;;
+    b) BREAK_TIME=$OPTARG;;
+    n) NUM_POMODOROS=$OPTARG;;
+    *) usage;;
+  esac
+done
+
+# Start the timer
+
+for (( i=1; i<=$NUM_POMODOROS; i++ ))
+do
+  echo "Pomodoro $i started ($(date +"%r"))"
+  sleep $(($POMODORO_TIME*60))
+  notify_complete
+  if [[ $i -lt $NUM_POMODOROS ]]
+  then
+    if [[ $(($i%4)) -ne 0 ]]
+    then
+      echo "Short break started ($(date +"%r"))"
+      sleep $(($BREAK_TIME*60))
+    fi
+  else
+    echo "Pomodoro cycle completed ($(date +"%r"))"
+  fi
+done
